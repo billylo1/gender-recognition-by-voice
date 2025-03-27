@@ -5,6 +5,8 @@ import requests
 from urllib.parse import urlparse
 from test import extract_feature
 from utils import create_model
+import numpy as np
+import json
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
@@ -67,7 +69,7 @@ def predict_gender():
         
         # Extract features and make prediction
         features = extract_feature(filepath, mel=True).reshape(1, -1)
-        male_prob = model.predict(features)[0][0]
+        male_prob = float(model.predict(features)[0][0])
         female_prob = 1 - male_prob
         gender = "male" if male_prob > female_prob else "female"
         
@@ -88,4 +90,4 @@ def predict_gender():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True) 
+    app.run(host="0.0.0.0", port=8000, debug=True) 
